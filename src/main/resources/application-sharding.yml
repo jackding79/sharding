@@ -1,0 +1,55 @@
+# 配置真实数据源
+dataSources:
+  # 配置第 1 个数据源
+  ds0: !!com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/ds0?serverTimezone=UTC
+    username: root
+    password: 123456
+    autoCommit: true
+  # 配置第 2 个数据源
+  ds1: !!com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/ds1?serverTimezone=UTC
+    username: root
+    password: 123456
+    autoCommit: true
+
+  # 配置第 2 个数据源
+  ds2: !!com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/ds2?serverTimezone=UTC
+    username: root
+    password: 123456
+    autoCommit: true
+
+rules:
+  # 配置分片规则
+  - !SHARDING
+    tables:
+      # 配置 t_order 表规则
+      t_order:
+        actualDataNodes: ds${0..2}.t_order${0..1}
+        # 配置分库策略
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: database_inline
+        # 配置分表策略
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: table_inline
+      # 省略配置 t_order_item 表规则...
+      # ...
+
+    # 配置分片算法
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds${user_id % 3}
+      table_inline:
+        type: INLINE
+        props:
+          algorithm-expression: t_order${order_id % 2}
