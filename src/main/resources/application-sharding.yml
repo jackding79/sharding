@@ -41,13 +41,13 @@ rules:
             shardingColumn: order_id
             shardingAlgorithmName: table_inline
       t_user:
-        actualDataNodes: ds${0..2}.t_user${0..1}
+        actualDataNodes: ds${0..2}.t_user_${0..1}
         databaseStrategy:
           hint:
-            shardingAlgorithmName: cn.jackding.shardingjdbc.demo.hint.HintUserAlgorithm
+            shardingAlgorithmName: hint_algorithm
         tableStrategy:
           hint:
-            shardingAlgorithmName: cn.jackding.shardingjdbc.demo.hint.HintUserAlgorithm
+            shardingAlgorithmName: hint_algorithm
     # 配置分片算法
     shardingAlgorithms:
       database_inline:
@@ -61,5 +61,9 @@ rules:
       user_inline:
         type: INLINE
         props:
-          algorithm-expression: t_user${user_id % 2}
+          algorithm-expression: t_user_${user_id % 2}
+      hint_algorithm:
+        type: MOD
+        props:
+
 ################################配置 t_user
